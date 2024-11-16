@@ -15,8 +15,13 @@ const PORT = process.env.PORT || 3300;
 
 const app = express();
 
+const corsOptions = {
+  origin: "https://www.thewhiteshark.io", // Allow requests from this origin
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
+  allowedHeaders: "Content-Type,Authorization",
+};
 // Enable CORS middleware
-app.use(cors());
+app.use(cors(corsOptions));
 
 // JSON middleware for Express
 app.use(express.json());
