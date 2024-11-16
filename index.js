@@ -10,18 +10,21 @@ dotenv.config();
 const MONGO_URI = process.env.MONGO_URI;
 // const BOT_TOKEN = process.env.BOT_TOKEN;
 // const WEBHOOK_URL = `${process.env.WEBHOOK_URL}bot${BOT_TOKEN}`;
-const NODE_ENV = process.env.NODE_ENV || "development";
+// const NODE_ENV = process.env.NODE_ENV || "development";
 const PORT = process.env.PORT || 3300;
 
 const app = express();
 
-const corsOptions = {
-  origin: "https://www.thewhiteshark.io", // Allow requests from this origin
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
-  allowedHeaders: "Content-Type,Authorization",
-};
-// Enable CORS middleware
-app.use(cors(corsOptions));
+app.use(
+  cors({
+    origin: "https://www.thewhiteshark.io", 
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], 
+    allowedHeaders: ["Content-Type", "Authorization"], 
+    credentials: true,
+  })
+);
+
+app.options('*', cors()); // Handle preflight requests for all routes
 
 // JSON middleware for Express
 app.use(express.json());
