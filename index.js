@@ -9,7 +9,7 @@ const User = require("./models/user_model");
 dotenv.config();
 const MONGO_URI = process.env.MONGO_URI;
 const BOT_TOKEN = process.env.BOT_TOKEN;
-const WEBHOOK_URL = `https://7305-2409-40f0-2008-2591-99f9-1c5b-73cf-9264.ngrok-free.app/bot${BOT_TOKEN}`; // Fixed URL format
+const WEBHOOK_URL = `https://tws-backend.vercel.app/bot${BOT_TOKEN}`; // Fixed URL format
 const NODE_ENV = process.env.NODE_ENV || "development";
 const PORT = process.env.PORT || 3300;
 
