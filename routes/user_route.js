@@ -5,8 +5,10 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const User = mongoose.model("User");
 const jwt = require("jsonwebtoken");
+
 // Define a secret key for JWT
 const JWT_SECRET = "my_jwt_secret_key";
+
 // Function to generate a unique alphanumeric referral ID
 async function generateUniqueReferralId() {
   let referralId;
@@ -35,7 +37,7 @@ function generateReferralId(length) {
 // Combined Signup/Login route
 router.post("/authenticate", async (req, res) => {
   const { username, referralId } = req.body;
-
+  console.log(req.body);
   // Check if username is provided
   if (!username) {
     return res.status(400).json({ message: "Username is required." });
@@ -93,13 +95,12 @@ router.post("/authenticate", async (req, res) => {
     );
 
     // Return user data and token
-    res.status(200).json({
-      message: user
-        ? "User logged in successfully"
-        : "User signed up successfully",
-      user,
-      token,
-    });
+     return res.status(200).json({
+       message: "User doesn't exist.",
+       user,
+       token,
+       existingUser: false, // Notify frontend user is already registered
+     });
   } catch (error) {
     console.error("Error during authentication:", error);
     res
