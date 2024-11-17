@@ -45,7 +45,21 @@ router.post("/authenticate", async (req, res) => {
     // Check if a user with the given username already exists
     let user = await User.findOne({ username });
 
-    if (!user) {
+    if (user) {
+      // If the user exists, generate a token and notify frontend
+      const token = jwt.sign(
+        { userId: user._id, username: user.username },
+        JWT_SECRET,
+        { expiresIn: "1h" } // Token expires in 1 hour
+      );
+
+      return res.status(200).json({
+        message: "User exists, navigating to home page.",
+        user,
+        token,
+        existingUser: true, // Notify frontend user is already registered
+      });
+    }else{
       // User does not exist, so create a new user (signup)
       // If referral ID is provided, validate it
       if (referralId) {
@@ -69,11 +83,6 @@ router.post("/authenticate", async (req, res) => {
       });
       await user.save();
 
-      // Send a response indicating successful signup
-      res.status(201).json({
-        message: "User signed up successfully",
-        user,
-      });
     }
 
     // Generate JWT token for the user (for both new and existing users)
