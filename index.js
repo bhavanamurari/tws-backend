@@ -13,6 +13,12 @@ const WEBHOOK_URL = `https://tws-backend.vercel.app/bot${BOT_TOKEN}`; // Fixed U
 const NODE_ENV = process.env.NODE_ENV || "development";
 const PORT = process.env.PORT || 3300;
 
+// MONGO_URI = "mongodb+srv://orcadehub2:orcadehub2@orcadehub.twfptkz.mongodb.net/thewhiteshark?retryWrites=true&w=majority&appName=OrcadeHub";
+// BOT_TOKEN = "7636130435:AAGO6lV_ptqI8z4ZMK3dkNc-arDnax5xvyI";
+// const WEBHOOK_URL = `https://tws-backend.vercel.app/bot${BOT_TOKEN}`;
+// NODE_ENV = "development"
+// PORT=3300
+
 const app = express();
 
 app.use(
@@ -117,11 +123,17 @@ const setWebhook = async () => {
 
 // Choose between webhook and polling based on the environment
 if (NODE_ENV === "production") {
-  setWebhook();
+  try {
+    await setWebhook();
+  } catch (error) {
+    console.log("Error setting webhook. Falling back to polling mode...");
+    bot.launch(); // Fallback to polling in case the webhook fails
+  }
 } else {
   bot.launch();
   console.log("Bot is running in development mode using polling...");
 }
+
 
 // Basic route to check if server is running
 app.get("/", (req, res) => {
