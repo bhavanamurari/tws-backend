@@ -1,4 +1,4 @@
-const { Telegraf } = require("telegraf");
+// const { Telegraf } = require("telegraf");
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -8,16 +8,17 @@ const User = require("./models/user_model");
 // Load environment variables
 dotenv.config();
 const MONGO_URI = process.env.MONGO_URI;
-const BOT_TOKEN = process.env.BOT_TOKEN;
-const WEBHOOK_URL = `${process.env.WEBHOOK_URL}/bot${BOT_TOKEN}`; // Fixed URL format
-const NODE_ENV = process.env.NODE_ENV || "development";
+// const BOT_TOKEN = process.env.BOT_TOKEN;
+//const WEBHOOK_URL = `${process.env.WEBHOOK_URL}/bot${BOT_TOKEN}`; // Fixed URL format
+// const NODE_ENV = process.env.NODE_ENV || "development";
 const PORT = process.env.PORT || 3300;
 
 const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "https://www.thewhiteshark.io",
+    // origin:"http://localhost:3000",
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
@@ -46,92 +47,6 @@ require("./models/task_model");
 app.use(require("./routes/user_route"));
 app.use(require("./routes/user_related_route"));
 app.use(require("./routes/task_route"));
-
-// Create Telegraf bot instance
-const bot = new Telegraf(BOT_TOKEN);
-
-// Webhook handler for Telegram updates
-app.post("/webhook", async (req, res) => {
-  try {
-    await bot.handleUpdate(req.body);
-    res.status(200).send("Webhook processed");
-  } catch (error) {
-    console.error("Error in webhook:", error);
-    res.status(500).send("Server Error");
-  }
-});
-
-// Command /start logic to check user and register if necessary
-bot.start(async (ctx) => {
-  const chatId = ctx.chat.id.toString();
-
-  try {
-    const user = await User.findOne({ chatId });
-
-    if (user) {
-      const fullname = user.fullName || "User";
-      await ctx.reply(
-        ` Welcome back ${fullname}! Open the web app and log in:`,
-        {
-          reply_markup: {
-            inline_keyboard: [
-              [
-                {
-                  text: "Login",
-                  web_app: { url: "https://thewhiteshark.io/" },
-                },
-              ],
-            ],
-          },
-        }
-      );
-    } else {
-      await ctx.reply("Welcome! Please sign up using our web app:", {
-        reply_markup: {
-          inline_keyboard: [
-            [
-              {
-                text: "SignUp",
-                web_app: { url: "https://thewhiteshark.io/authenticate" },
-              },
-            ],
-          ],
-        },
-      });
-    }
-  } catch (error) {
-    console.error("Error occurred in /start command:", error);
-    ctx.reply("An error occurred. Please try again later.");
-  }
-});
-
-// Function to set the webhook in production mode
-const setWebhook = async () => {
-  try {
-    await bot.telegram.setWebhook(WEBHOOK_URL); // Set the correct URL here
-    console.log(`Webhook set to ${WEBHOOK_URL}`);
-  } catch (error) {
-    console.error("Error setting webhook:", error);
-  }
-};
-
-// Function to initialize the bot
-const startBot = async () => {
-  if (NODE_ENV === "production") {
-    try {
-      await setWebhook();
-    } catch (error) {
-      console.log("Error setting webhook. Falling back to polling mode...");
-      bot.launch(); // Fallback to polling in case the webhook fails
-    }
-  } else {
-    bot.launch();
-    console.log("Bot is running in development mode using polling...");
-  }
-};
-
-// Start the bot
-startBot();
 
 
 // Basic route to check if server is running
