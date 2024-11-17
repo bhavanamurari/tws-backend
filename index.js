@@ -121,18 +121,23 @@ const setWebhook = async () => {
   }
 };
 
-// Choose between webhook and polling based on the environment
-if (NODE_ENV === "production") {
-  try {
-    await setWebhook();
-  } catch (error) {
-    console.log("Error setting webhook. Falling back to polling mode...");
-    bot.launch(); // Fallback to polling in case the webhook fails
+// Function to initialize the bot
+const startBot = async () => {
+  if (NODE_ENV === "production") {
+    try {
+      await setWebhook();
+    } catch (error) {
+      console.log("Error setting webhook. Falling back to polling mode...");
+      bot.launch(); // Fallback to polling in case the webhook fails
+    }
+  } else {
+    bot.launch();
+    console.log("Bot is running in development mode using polling...");
   }
-} else {
-  bot.launch();
-  console.log("Bot is running in development mode using polling...");
-}
+};
+
+// Start the bot
+startBot();
 
 
 // Basic route to check if server is running
