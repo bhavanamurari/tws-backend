@@ -9,15 +9,9 @@ const User = require("./models/user_model");
 dotenv.config();
 const MONGO_URI = process.env.MONGO_URI;
 const BOT_TOKEN = process.env.BOT_TOKEN;
-const WEBHOOK_URL = `https://tws-backend.vercel.app/bot${BOT_TOKEN}`; // Fixed URL format
+const WEBHOOK_URL = `${process.env.WEBHOOK_URL}/bot${BOT_TOKEN}`; // Fixed URL format
 const NODE_ENV = process.env.NODE_ENV || "development";
 const PORT = process.env.PORT || 3300;
-
-// MONGO_URI = "mongodb+srv://orcadehub2:orcadehub2@orcadehub.twfptkz.mongodb.net/thewhiteshark?retryWrites=true&w=majority&appName=OrcadeHub";
-// BOT_TOKEN = "7636130435:AAGO6lV_ptqI8z4ZMK3dkNc-arDnax5xvyI";
-// const WEBHOOK_URL = `https://tws-backend.vercel.app/bot${BOT_TOKEN}`;
-// NODE_ENV = "development"
-// PORT=3300
 
 const app = express();
 
